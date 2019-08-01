@@ -1,0 +1,290 @@
+  " vimrc file
+  " This is a combination of the vim example .vimrc file, settings from
+  " MUNIS .vimrc and personal changes
+  "
+  " Maintainer: David Foster
+  " Last change: 11/21/2007
+  "
+  " To use it, copy it to
+  "     for Unix and OS/2:  ~/.vimrc
+  "  for MS-DOS and Win32:  $VIM\_vimrc
+
+  " When started as "evim", evim.vim will already have done these settings.
+  if v:progname =~? "evim"
+    finish
+  endif
+
+  " Use Vim settings, rather then Vi settings (much better!).
+  " This must be first, because it changes other options as a side effect.
+  set nocompatible
+
+  " allow backspacing over everything in insert mode
+  set backspace=indent,eol,start
+
+  " Most color xterms have only eight colors.  If you don't get colors with the
+  " default setup, it should work with these lines in your .vimrc: >
+  if &term =~ "xterm"
+    if has("terminfo")
+      set t_Co=8
+      set t_Sf=^[3%p1%dm
+      set t_Sb=^[4%p1%dm
+    else
+      set t_Co=8
+      set t_Sf=^[3%dm
+      set t_Sb=^[4%dm
+    endif
+  endif
+
+
+  " For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
+  " let &guioptions = substitute(&guioptions, "t", "", "g")
+
+  " Don't use Ex mode, use Q for formatting
+  "map Q gq
+  map <Del> <C-H>           " When <Backspace> sends a delete character, then
+                            " remap it to a backspace (CTRL-H)
+
+
+  " This is an alternative that also works in block mode, but the deleted
+  " text is lost and it only works for putting the current register.
+  "vnoremap p "_dp
+
+  " Switch syntax highlighting on, when the terminal has colors
+  " Also switch on highlighting the last used search pattern.
+  if &t_Co > 2 || has("gui_running")
+    syntax on
+    set hlsearch
+  endif
+
+  " Only do this part when compiled with support for autocommands.
+  if has("autocmd")
+
+    " Enable file type detection.
+    " Use the default filetype settings, so that mail gets 'tw' set to 72,
+    " 'cindent' is on in C files, etc.
+    " Also load indent files, to automatically do language-dependent indenting.
+    filetype plugin indent on
+
+    " Put these in an autocmd group, so that we can delete them easily.
+    augroup vimrcEx
+    au!
+
+    " For all text files set 'textwidth' to 78 characters.
+    autocmd FileType text setlocal textwidth=78
+
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid or when inside an event handler
+    " (happens when dropping a file on gvim).
+    autocmd BufReadPost *
+      \ if line("'\"") > 0 && line("'\"") <= line("$") |
+      \   exe "normal g`\"" |
+      \ endif
+
+    augroup END
+
+  else
+
+    set autoindent     " always set autoindenting on
+
+  endif " has("autocmd")
+
+  colorscheme ron        " Pick a good color scheme (see $VIMRUNTIME/colors for options)
+
+  set autoindent         " Smart alignment at the beginning of a line
+  set backspace=2        " Always backspace over everything
+  set cmdheight=2        " Set the command line height to 2 rows
+  set confirm            " Confirm dangerous actions
+  set noexpandtab          " Expand <Tab> to spaces
+  set history=50         " Keep 50 lines of command line history
+  set ignorecase         " Perform case insensitive searches
+  set laststatus=2       " Always show the status line
+  "set list               " Show hidden characters (<Tab>, eol, etc.)
+                          " Turned off by default, toggle with <C-L>
+  set listchars=eol:$,tab:>>,trail:~
+                         " Show eol characters as '$'
+                         " Show a <Tab> as '>>>'
+                         " Show trailing spaces as '~'
+  set modelines=0        " Protection from VIM worm
+  "set mouse=ar           " Use the mouse in all modes, plus hit-return
+  set noautowrite        " Don't write anything to disk w/o verification first
+  set nobackup           " Don't create those ~ files (step 1/2)
+  set nowritebackup      " Don't create those ~ files (step 2/2)
+  set noerrorbells       " Turn off the sounds
+  "set nohlsearch         " Don't highlight the search pattern
+  set noincsearch        " incremental searching; find as typing
+  set nojoinspaces       " Don't insert 2 spaces after a '.?!' and a join command
+  set nonumber           " Don't show line numbers on each line
+  set nostartofline      " Maintain cursor position
+  set novisualbell       " Don't show any alerts by flashing the screen
+  set ruler              " Show the cursor position all the time
+  set scrolloff=3        " Keep 3 lines above and below the cursor
+  set selectmode=mouse   " Use the mouse to select items
+  set shiftwidth=3       " When autoindent does a tab, it's 3 spaces
+  set shiftround         " Round indents off to shiftwidth spaces
+  set showcmd            " Show the command that I'm typing
+  set showmatch          " When a bracket is inserted, jump briefly to its match
+  set showmode           " Display INERT/REPLACE/...
+  set smartindent        " Indent after new blocks (if, while, for, etc.)
+  set smartcase          " Smartens up case insensitive searches (word vs. Word)
+  set softtabstop=3      " # of spaces that a <Tab> counts for in editing
+  set term=$TERM         " Use the terminal defined at LOGIN
+  set textwidth=78       " Wrap at column ? with a forced new line
+  set tabstop=3          " A <Tab> is 3 spaces long
+  set ttyfast            " This setting provides smoother changes
+  "set ttymouse=xterm     " Use the mouse
+  set undolevels=500     " Allow for up to 500 mistakes
+  set viminfo=           " Don't write a .viminfo file
+  set whichwrap=h,l,~,[,] " Wrap to the previous/next line on most keys
+  set wrap               " Wrap long lines of text
+  set wrapscan            " Search wraps to start of file
+  set foldcolumn=2        " small column on window left to indicate folds
+  set foldclose=all       " auto close fold when leaving fold
+
+  syntax enable          " Enable syntax highlighting
+
+  behave xterm           " VIM behavior seems to require this below the
+                         " other setting
+
+  " Have '\tl' (toggle list) toggle list on/off and report the change.
+  " Map this toggle to <CONTROL-L> as well.
+  nnoremap \tl :set invlist list?<CR>
+  map <C-L> \tl
+  " Map the keypad so that it works!!
+  " BTW, "map" = normal and visual, "map!" = insert and command mode.
+  map! <ESC>Op 0
+  map! <ESC>Oq 1
+  map! <ESC>Or 2
+  map! <ESC>Os 3
+  map! <ESC>Ot 4
+  map! <ESC>Ou 5
+  map! <ESC>Ov 6
+  map! <ESC>Ow 7
+  map! <ESC>Ox 8
+  map! <ESC>Oy 9
+  map! <ESC>Ol +
+  map! <ESC>OS -
+  map! <ESC>OR *
+  map! <ESC>OQ /
+  map! <ESC>On .
+  map <ESC>Op 0
+  map <ESC>Oq 1
+  map <ESC>Or 2
+  map <ESC>Os 3
+  map <ESC>Ot 4
+  map <ESC>Ou 5
+  map <ESC>Ov 6
+  map <ESC>Ow 7
+  map <ESC>Ox 8
+  map <ESC>Oy 9
+  map <ESC>Ol +
+  map <ESC>OS -
+  map <ESC>OR *
+  map <ESC>OQ /
+  map <ESC>On .
+
+  " Make a better status line that includes more information
+  fu! FileTime()
+          let ext=tolower(expand("%:e"))
+          let fname=tolower(expand('%<'))
+          let filename=fname . '.' . ext
+          let msg=""
+          let msg=msg." ".strftime("(Modified %b,%d %y %H:%M:%S)",getftime(filename))
+          return msg
+  endf
+
+  fu! CurTime()
+          let ftime=""
+          let ftime=ftime." ".strftime("%b,%d %y %H:%M:%S")
+          return ftime
+  endf
+
+set statusline=%<%f%<%{FileTime()}%<%h%m%r%=%-20.(line=%03l,col=%02c,totlin=%L%)\%h%m%r%=%-30(,BfNm=%n%Y%)\%P\*%=%{CurTime()}
+"hi User1 guifg=#ffdad8  guibg=#880c0e
+"hi User2 guifg=#000000  guibg=#F4905C
+"hi User3 guifg=#292b00  guibg=#f4f597
+"hi User4 guifg=#112605  guibg=#aefe7B
+"hi User5 guifg=#051d00  guibg=#7dcc7d
+"hi User7 guifg=#ffffff  guibg=#880c0e gui=bold
+"hi User8 guifg=#ffffff  guibg=#5b7fbb
+"hi User9 guifg=#ffffff  guibg=#810085
+"hi User0 guifg=#ffffff  guibg=#094afe
+"function! HighlightSearch()
+"  if &hls
+"    return 'H'
+"  else
+"    return ''
+"  endif
+"endfunction
+"set statusline=
+"set statusline+=%7*\[%n]                                  "buffernr
+"set statusline+=%1*\ %<%F\                                "File+path
+"set statusline+=%2*\ %y\                                  "FileType
+"set statusline+=%3*\ %{''.(&fenc!=''?&fenc:&enc).''}      "Encoding
+"set statusline+=%3*\ %{(&bomb?\",BOM\":\"\")}\            "Encoding2
+"set statusline+=%4*\ %{&ff}\                              "FileFormat (dos/unix..) 
+"set statusline+=%5*\ %{&spelllang}\%{HighlightSearch()}\  "Spellanguage & Highlight on?
+"set statusline+=%8*\ %=\ row:%l/%L\ (%03p%%)\             "Rownumber/total (%)
+"set statusline+=%9*\ col:%03c\                            "Colnr
+"set statusline+=%0*\ \ %m%r%w\ %P\ \                      "Modified? Readonly? Top/bot.
+
+  "custom copy'n'paste
+  "copy the current visual selection to ~/.vbuf
+  vmap <C-c> :w! ~/.vbuf<CR>
+  "copy the current line to the buffer file if no visual selection
+  nmap <C-c> :.w! ~/.vbuf<CR>
+  "paste the contents of the buffer file
+  nmap <C-v> :r ~/.vbuf<CR>
+
+  "----------Comments out code--------------------------
+  "This currently does not work
+  function! XcommentLine()
+          " Comment out current line and return to cursor pos.
+          let n=col(".")+3
+          let @z="#+ "
+          normal 0"zp
+          exe "normal ".n."|"
+  endfunction
+
+  " --------------------------------------------------------------
+  "This currently does not work
+  function! CommentLine()
+          " Comment out current line, move down and over for next line.
+          let n=col(".")+3
+          let @z="# "
+          normal 0"zp
+          exe "normal ".n."|"
+  endfunction
+
+  " --------------------------------------------------------------
+  :function! ToggleSyntax()
+          " Toggle syntax highlighting
+          if has("syntax_items")
+             syntax off
+          else
+             syntax on
+          endif
+  :endfunction
+
+  " --------------------------------------------------------------
+  :function! ReverseBackground()
+     let Mysyn=&syntax
+     if &bg=="light"
+         se bg=dark
+         highlight Normal guibg=black guifg=white
+     else
+         se bg=light
+         highlight Normal guibg=white guifg=black
+     endif
+     syn on
+     exe "set syntax=" . Mysyn
+  :endfunction
+
+  " Reformat paragraph lines to textwidth
+  :map <F7>  {gq} <cr>
+  :map <F8> : call XcommentLine()<cr>
+  :map <F9> : call CommentLine()<cr>
+  :map <F10> : call ToggleSyntax()<cr>
+  :map <F11> : call ReverseBackground()<cr>
+  " Toggle paste if something you pasted doesn't look right
+  :set pastetoggle=<F12>
+
